@@ -20,13 +20,14 @@ def getcode(key):
 # Configure keybinds
 def configk():
     # Each key in this list is a HK
-    grabbedKeys = [XK.XK_Return, XK.XK_D, XK.XK_Tab, XK.XK_Q, XK.XK_H, XK.XK_J, XK.XK_K, XK.XK_L, XK.XK_1, XK.XK_2, XK.XK_3, XK.XK_4, XK.XK_5]
+    grabbedKeys = [XK.XK_Return, XK.XK_D, XK.XK_Tab, XK.XK_Q, XK.XK_H, XK.XK_J, XK.XK_K, XK.XK_L, XK.XK_1, XK.XK_2, XK.XK_3, XK.XK_4, XK.XK_5, XK.XK_P, XK.XK_U, XK.XK_O, XK.XK_I]
     for keyBinding in grabbedKeys:
         code = getcode(keyBinding)
         rootwindow.grab_key(code, mod, 1, X.GrabModeAsync, X.GrabModeAsync)
         
 # Handle keypress events
 def kp(event):
+    print(event.detail)
     if event.detail == getcode(XK.XK_Return): run('urxvt')
     if event.detail == getcode(XK.XK_D): run('rofi -show run')
     if event.detail == getcode(XK.XK_Tab): switchfocus()
@@ -40,6 +41,10 @@ def kp(event):
     if event.detail == getcode(XK.XK_3): showws('3')
     if event.detail == getcode(XK.XK_4): showws('4')
     if event.detail == getcode(XK.XK_5): showws('5')
+    if event.detail == getcode(XK.XK_P): width(10)
+    if event.detail == getcode(XK.XK_U): width(-10)
+    if event.detail == getcode(XK.XK_O): height(10)
+    if event.detail == getcode(XK.XK_I): height(-10)
 
 # Create the workspace dictionary
 def genworkspaces(ws):
@@ -119,6 +124,18 @@ def showws(wsto):
     for window in workspaces[wsto]:
         window.map()
         window.set_input_focus(X.RevertToParent, X.CurrentTime)
+
+# Add or remove a variable number of pixels to a windows width
+def width(pixels):
+    focus = display.get_input_focus().focus
+    windowGeometry = focus.get_geometry()
+    focus.configure(width = windowGeometry.width + pixels)
+
+# Add or remove a variable number of pixels to a windows width
+def height(pixels):
+    focus = display.get_input_focus().focus
+    windowGeometry = focus.get_geometry()
+    focus.configure(height = windowGeometry.height + pixels)
 
 # The main loop
 def main():

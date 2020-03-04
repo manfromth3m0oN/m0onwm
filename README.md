@@ -3,6 +3,12 @@
 TODO:
 * Document almost everything
 
+## Keybinds
+
+To edit the keybinds first add the key to the `grabbedKeys` list.
+After which you need to define its functionality in the `kp()` function
+
+
 ## Mapping of windows for workspaces
 
 When a window is created it needs to be mapped to be visible.
