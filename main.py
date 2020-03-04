@@ -10,8 +10,8 @@ rootwindow = display.screen().root # init root window
 rootwindow.change_attributes(event_mask = X.SubstructureRedirectMask) # Add a mask that im not quite sure the function of
 
 mod = X.Mod4Mask # Mod is Win/Super key
-windowlist = []
 workspaces = {}
+ws = '1'
 # Get the keycode of a specific key
 def getcode(key):
     codes= set(code for code, index in display.keysym_to_keycodes(key))
@@ -19,7 +19,8 @@ def getcode(key):
 
 # Configure keybinds
 def configk():
-    grabbedKeys = [XK.XK_Return, XK.XK_D, XK.XK_Tab, XK.XK_Q, XK.XK_H, XK.XK_J, XK.XK_K, XK.XK_L] # Each key in this list is a HK
+    # Each key in this list is a HK
+    grabbedKeys = [XK.XK_Return, XK.XK_D, XK.XK_Tab, XK.XK_Q, XK.XK_H, XK.XK_J, XK.XK_K, XK.XK_L, XK.XK_1, XK.XK_2, XK.XK_3, XK.XK_4, XK.XK_5]
     for keyBinding in grabbedKeys:
         code = getcode(keyBinding)
         rootwindow.grab_key(code, mod, 1, X.GrabModeAsync, X.GrabModeAsync)
@@ -34,6 +35,11 @@ def kp(event):
     if event.detail == getcode(XK.XK_L): movewinx(10)
     if event.detail == getcode(XK.XK_K): movewiny(10)
     if event.detail == getcode(XK.XK_J): movewiny(-10)
+    if event.detail == getcode(XK.XK_1): showws('1')
+    if event.detail == getcode(XK.XK_2): showws('2')
+    if event.detail == getcode(XK.XK_3): showws('3')
+    if event.detail == getcode(XK.XK_4): showws('4')
+    if event.detail == getcode(XK.XK_5): showws('5')
 
 # Create the workspace dictionary
 def genworkspaces(ws):
@@ -42,12 +48,12 @@ def genworkspaces(ws):
 
 # Change focus to the next window
 def switchfocus():
-    if len(windowlist) > 1:
+    if len(workspaces[ws]) > 1:
         focus = display.get_input_focus().focus
-        index = windowlist.index(focus)
+        index = workspaces[ws].index(focus)
         target = index + 1
-        if target >= len(windowlist): target = 0
-        display.set_input_focus(windowlist[target], X.RevertToParent, 0)
+        if target >= len(workspaces[ws]): target = 0
+        display.set_input_focus(workspaces[ws][target], X.RevertToParent, 0)
         newfocus = display.get_input_focus().focus
         newfocus.configure(stack_mode=X.Above)
     else:
@@ -61,15 +67,21 @@ def run(command):
 # Close the currently focused window
 def windowClose():
     focus = display.get_input_focus().focus
-    focus.destroy()
-    if len(windowlist) > 1:
-        index = windowlist.index(focus)
+    if len(workspaces[ws]) >= 1:
+        print('Falling back to previous window')
+        index = workspaces[ws].index(focus)
+        print(index)
         target = index - 1
-        if target >= len(windowlist): target = 0
-        windowlist.remove(focus)
-        display.set_input_focus(windowlist[target], X.RevertToParent, 0)
+        print(target)
+        if target >= len(workspaces[ws]): target = 0
+        display.set_input_focus(workspaces[ws][target], X.RevertToParent, 0)
+        focus.destroy()
+        workspaces[ws].remove(focus)
     else:
+        print('falling back to root window')
         display.set_input_focus(X.PointerRoot, X.RevertToParent, 0)
+        focus.destroy()
+        workspaces[ws].remove(focus)
 
 # Move the window by a variable number of pixels in the x direction
 def movewinx(pixels):
@@ -85,10 +97,11 @@ def movewiny(pixels):
 
 # Handle map event
 def me(event):
+    print(event.window)
+    assigntows(event.window, ws)
     event.window.map()
     event.window.set_input_focus(X.RevertToParent, X.CurrentTime)
     event.window.configure(stack_mode = X.Above)
-    windowlist.append(event.window)
 
 # Assign a window to a workspace
 def assigntows(window, workspace):
@@ -98,9 +111,14 @@ def assigntows(window, workspace):
         print('Window already in a workspace')
 
 # map all windows in a workspace
-def showws(ws):
+def showws(wsto):
+    global ws
     for window in workspaces[ws]:
-        window.map
+        window.unmap()
+    ws = wsto
+    for window in workspaces[wsto]:
+        window.map()
+        window.set_input_focus(X.RevertToParent, X.CurrentTime)
 
 # The main loop
 def main():
@@ -110,6 +128,7 @@ def main():
     subprocess.Popen(['xrdb', '~/.Xresources'])
     while True:
         if True:
+            print(workspaces)
             event = display.next_event()
             if event.type == X.KeyPress: kp(event)
             elif event.type == X.MapRequest: me(event)
