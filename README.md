@@ -8,6 +8,9 @@ TODO:
 To edit the keybinds first add the key to the `grabbedKeys` list.
 After which you need to define its functionality in the `kp()` function
 
+## Workspaces
+
+To change the names of the workspaces the `genworkspaces()` call needs to be changed and some minor adjustments to accept words or short collections of chars to use as ws names
 
 ## Mapping of windows for workspaces
 
@@ -21,3 +24,49 @@ The first step is for when process is spawned, if it sends a map request, the re
 Then by looping through the windows atributed to a certian workspace, once a workspace is opened, each window will be mapped with the `Window.map()` method
 
 When leaving a workspace all open programs will be unmapped with `Window.unmap()`
+
+## Conceptualising how tiling should work
+
+lets say we have 4 windows. we are aiming for a layout that looks like this:
+```
++-------------------------------------------------------------------------------------------+
+|---------------------------------------------+ +-------------------------------------------|
+||                                            | |                                          ||
+||                                            | |                                          ||
+||                                            | |                  ____                    ||
+||                                            | |                 |  _ \                   ||
+||                                            | |                 | |_) |                  ||
+||                                            | |                 |  _ <                   ||
+||                                            | |                 | |_) |                  ||
+||                                            | |                 |____/                   ||
+||                                            | |                                          ||
+||                    /\                      | |                                          ||
+||                   /  \                     | |                                          ||
+||                  / /\ \                    | +-------------------------------------------+
+||                 / ____ \                   | +--------------------+  +-----------------+ |
+||                /_/    \_\                  | |                    |  |                 | |
+||                                            | |                    |  |                 | |
+||                                            | |         _____      |  |     _____       | |
+||                                            | |        / ____|     |  |    |  __ \      | |
+||                                            | |       | |          |  |    | |  | |     | |
+||                                            | |       | |          |  |    | |  | |     | |
+||                                            | |       | |____      |  |    | |__| |     | |
+||                                            | |        \_____|     |  |    |_____/      | |
+||                                            | |                    |  |                 | |
+||                                            | |                    |  |                 | |
+||                                            | |                    |  |                 | |
+|---------------------------------------------+ +--------------------+  +-----------------+ |
++-------------------------------------------------------------------------------------------+
+```
+
+## Install
+
+Requirements:
+```
+Xlib
+```
+
+To install clone the repo and put this in your `.xinitrc`
+```
+exec python /path/to/m0onwm/main.py
+```

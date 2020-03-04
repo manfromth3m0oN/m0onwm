@@ -32,19 +32,19 @@ def kp(event):
     if event.detail == getcode(XK.XK_D): run('rofi -show run')
     if event.detail == getcode(XK.XK_Tab): switchfocus()
     if event.detail == getcode(XK.XK_Q): windowClose()
-    if event.detail == getcode(XK.XK_H): movewinx(-10)
-    if event.detail == getcode(XK.XK_L): movewinx(10)
-    if event.detail == getcode(XK.XK_K): movewiny(10)
-    if event.detail == getcode(XK.XK_J): movewiny(-10)
+    # if event.detail == getcode(XK.XK_H): movewinx(-10)
+    # if event.detail == getcode(XK.XK_L): movewinx(10)
+    # if event.detail == getcode(XK.XK_K): movewiny(10)
+    # if event.detail == getcode(XK.XK_J): movewiny(-10)
     if event.detail == getcode(XK.XK_1): showws('1')
     if event.detail == getcode(XK.XK_2): showws('2')
     if event.detail == getcode(XK.XK_3): showws('3')
     if event.detail == getcode(XK.XK_4): showws('4')
     if event.detail == getcode(XK.XK_5): showws('5')
-    if event.detail == getcode(XK.XK_P): width(10)
-    if event.detail == getcode(XK.XK_U): width(-10)
-    if event.detail == getcode(XK.XK_O): height(10)
-    if event.detail == getcode(XK.XK_I): height(-10)
+    # if event.detail == getcode(XK.XK_P): width(10)
+    # if event.detail == getcode(XK.XK_U): width(-10)
+    # if event.detail == getcode(XK.XK_O): height(10)
+    # if event.detail == getcode(XK.XK_I): height(-10)
 
 # Create the workspace dictionary
 def genworkspaces(ws):
@@ -122,6 +122,10 @@ def showws(wsto):
         window.unmap()
     ws = wsto
     for window in workspaces[wsto]:
+        root = rootwindow.get_geometry()
+        print(root.width)
+        print(root.height)
+        window.configure(width = root.width, height = root.height)
         window.map()
         window.set_input_focus(X.RevertToParent, X.CurrentTime)
 
@@ -137,12 +141,14 @@ def height(pixels):
     windowGeometry = focus.get_geometry()
     focus.configure(height = windowGeometry.height + pixels)
 
+def autostart():
+    run('wal -R')
+
 # The main loop
 def main():
     configk()
     genworkspaces('1234567890')
-    subprocess.Popen(['wal', '-R'])
-    subprocess.Popen(['xrdb', '~/.Xresources'])
+    autostart()
     while True:
         if True:
             print(workspaces)
