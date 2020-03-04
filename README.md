@@ -58,6 +58,23 @@ lets say we have 4 windows. we are aiming for a layout that looks like this:
 |---------------------------------------------+ +--------------------+  +-----------------+ |
 +-------------------------------------------------------------------------------------------+
 ```
+So; A is half of the screen
+    B is a quater of the screen
+    C & D are an eight respectively
+
+programatically this would mean:
+* first we need to get the geometery of the root window with `root.get_geometry()`
+* next we iterate through the list of windows in the workspace
+    * in this system A always takes up 50% of the screen (if there are other windows open in the ws)
+    so we take the root window size and divide it by 2 then make the windows x & y these values
+    * now we have the other half of the screen left therefore all y values will be offset by the root width/2 
+    now the overall screen space is half of what it was so we will treat root width and height as half of what their values are
+    
+
+full screen = 1280x720
+half screen = 640x360
+quater screen = 320x180
+
 
 ## Install
 
