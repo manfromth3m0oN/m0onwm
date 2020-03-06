@@ -68,7 +68,13 @@ programatically this would mean:
     * in this system A always takes up 50% of the screen (if there are other windows open in the ws)
     so we take the root window size and divide it by 2 then make the windows x & y these values
     * now we have the other half of the screen left therefore all y values will be offset by the root width/2 
-    now the overall screen space is half of what it was so we will treat root width and height as half of what their values are
+    and the overall screen space is half of what it was so we will treat root width and height as half of what their values are
+    * therefore simulated `root.get_geometry()` will take on the values `x = x/2, y = y/2, width = width/2, height = height`
+    * A good way of distinguishing which way the screen should be split is by determining weather `width > height`
+    * if this is false we know that the screen needs to be split vertically 
+    * then we re-simulate the `root.get_geometry()` which is now equal to `x=x/4, y=y/4 width = width/2, height=height/2`
+    * again we evaluate weather `width > height`
+    * 
     
 
 full screen = 1280x720
