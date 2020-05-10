@@ -128,7 +128,7 @@ def movewiny(pixels):
 # Handle map event
 def me(event):
 	print('Map Event: ')
-	print(event)
+	print(event.window)
 	assigntows(event.window, ws)
 	event.window.map()
 	event.window.set_input_focus(X.RevertToParent, X.CurrentTime)
@@ -143,7 +143,23 @@ def me(event):
 
 # Tile all windows in current workspace
 def tile():
-	
+	if len(workspaces[ws]) == 1:
+		width = rootwindow.get_geometry().width - (2 * gap)
+		height = rootwindow.get_geometry().height - ((2 * gap) + barHeight)
+		workspaces[ws][0].configure(stack_mode = X.Above, width=width, height=height, x=gap, y=gap + barHeight)
+	elif len(workspaces[ws]) > 1:
+		print(workspaces[ws])
+		if len(workspaces[ws]) == 2:
+			# First window
+			width = round((rootwindow.get_geometry().width / 2) - gap)
+			height = (rootwindow.get_geometry().height) - (2 * gap)
+			workspaces[ws][0].configure(stack_mode = X.Above, width=width, height=height, x=gap, y=gap + barHeight)
+			# Second window
+			width = round((rootwindow.get_geometry().width / 2) - gap)
+			height = (rootwindow.get_geometry().height) - (2 * gap)
+			x = (rootwindow.get_geometry().width / 2)
+			y = rootwindow.get_geometry().height
+			workspaces[ws][1].configure()
 
 # Assign a window to a workspace
 def assigntows(window, workspace):
