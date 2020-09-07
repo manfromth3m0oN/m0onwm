@@ -48,7 +48,7 @@ def configk():
 # Handle keypress events
 def kp(event):
 	print(event.window)
-	if event.detail == getcode(XK.XK_Return): run('kitty')
+	if event.detail == getcode(XK.XK_Return): run('alacritty')
 	if event.detail == getcode(XK.XK_D): run('dmenu_run')
 	if event.detail == getcode(XK.XK_Tab): switchfocus()
 	if event.detail == getcode(XK.XK_Q): windowClose()
@@ -144,22 +144,32 @@ def me(event):
 # Tile all windows in current workspace
 def tile():
 	if len(workspaces[ws]) == 1:
-		width = rootwindow.get_geometry().width - (2 * gap)
-		height = rootwindow.get_geometry().height - ((2 * gap) + barHeight)
-		workspaces[ws][0].configure(stack_mode = X.Above, width=width, height=height, x=gap, y=gap + barHeight)
-	elif len(workspaces[ws]) > 1:
+		desiredWidth = round((rootwindow.get_geometry().width - (2 * gap)))
+		desiredHeight = round((rootwindow.get_geometry().height - ((2 * gap) + barHeight)))
+		print('Desired width and height: ', desiredWidth, ' ', desiredHeight)
+		workspaces[ws][0].configure(stack_mode = X.Above, width=desiredWidth, height=desiredHeight, x=gap, y=gap + barHeight)
+	else:
 		print(workspaces[ws])
-		if len(workspaces[ws]) == 2:
-			# First window
-			width = round((rootwindow.get_geometry().width / 2) - gap)
-			height = (rootwindow.get_geometry().height) - (2 * gap)
-			workspaces[ws][0].configure(stack_mode = X.Above, width=width, height=height, x=gap, y=gap + barHeight)
-			# Second window
-			width = round((rootwindow.get_geometry().width / 2) - gap)
-			height = (rootwindow.get_geometry().height) - (2 * gap)
-			x = (rootwindow.get_geometry().width / 2)
-			y = rootwindow.get_geometry().height
-			workspaces[ws][1].configure()
+		width = round((rootwindow.get_geometry().width - (2 * gap)) / 2)
+		height = round((rootwindow.get_geometry().height - ((2 * gap) + barHeight)))
+		workspaces[ws][0].configure(stack_mode = X.Above, width=width-10, height=height, x=gap, y=gap + barHeight)
+		# height = round(((rootwindow.get_geometry().height-2 * gap) / 3) - gap)
+		# x = round(rootwindow.get_geometry().width / 2)
+		# y = gap
+		# workspaces[ws][1].configure(stack_mode = X.Above, width=width, height=height, x=x, y=y)
+		# y = 2 * gap + height
+		# if len(workspaces[ws]) > 2:
+		# 	workspaces[ws][2].configure(stack_mode = X.Above, width=width, height=height, x=x, y=y)
+		# y = 3 * gap + 2 * height
+		# if len(workspaces[ws]) > 3:
+		# 	workspaces[ws][3].configure(stack_mode = X.Above, width=width, height=height, x=x, y=y)
+		stackLen = len(workspaces[ws]) - 1
+		height = round(((rootwindow.get_geometry().height-2 * gap) / stackLen) - gap)
+		x = round(rootwindow.get_geometry().width / 2)
+		for window in workspaces[ws]:
+			y = (workspaces[ws].index(window) - 1) * height + gap
+			window.configure(stack_mode = X.Above, width=width, height=height, x=x, y=y)
+
 
 # Assign a window to a workspace
 def assigntows(window, workspace):
